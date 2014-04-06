@@ -1,0 +1,31 @@
+  <ul class="nav nav-pills nav-justified">
+    <li ><a href="#/parameterConfig">參數設定</a></li>
+    <li class="active"><a href="#/importFile">導入檔案</a></li>
+    <li ><a href="#">計算</a></li>
+  </ul>
+  <hr/>
+  <div>
+    <label class="control-label">
+      請選擇資料檔，載入前請確認格式：
+    </label>
+    <input class="form-control" type="file" onchange="readFile(this)"/>
+    <div class="well">
+      
+      請確認資料檔格式，資料檔格式如下：<br/>
+      第一行 : 
+        發車座標x(單位長度),
+        發車座標y(單位長度),
+        車輛數(輛),
+        駕駛工作時間限制(單位時間),
+        車輛速度(單位長度/單位時間),
+        可接受誤差時間(單位時間),
+        乘坐時間限制(單位時間)<br/>
+      第二行以後 : 
+        乘客搭車座標x(單位長度), 
+        乘客搭車座標y(單位長度), 
+        乘客下車座標x(單位長度), 
+        乘客下車座標y(單位長度), 
+        搭乘時間(單位時間)<br/>
+      <a href="file/example.txt">測試檔</a>
+    </div>
+  </div>

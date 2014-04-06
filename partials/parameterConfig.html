@@ -1,0 +1,141 @@
+  <ul class="nav nav-pills nav-justified">
+    <li class="active"><a href="#/parameterConfig">參數設定</a></li>
+    <li ><a href="#/importFile">導入檔案</a></li>
+    <li ><a href="#">計算</a></li>
+  </ul>
+  <hr/>
+  <div class="form-horizontal">
+    <div class="form-group 
+        {{checkInteger(data.StartCoordinate.x)&&checkInteger(data.StartCoordinate.y)?'':'has-error'}}">
+      <label class="col-sm-3 control-label">發車座標：</label>
+      <div class="col-sm-4">
+        <input type="number" integer required
+          class="form-control" 
+          placeholder="請輸入x座標(單位長度)"
+          ng-model="data.StartCoordinate.x" >
+      </div>
+      <div class="col-sm-4">
+        <input type="number" integer required
+          class="form-control" 
+          placeholder="請輸入y座標(單位長度)"
+          ng-model="data.StartCoordinate.y" >
+      </div>
+    </div>
+    <div class="form-group 
+        {{checkInteger(data.CarNumber)?'':'has-error'}}">
+      <label class="col-sm-3 control-label">車輛數：</label>
+      <div class="col-sm-8">
+        <input type="number" integer required
+          class="form-control" 
+          placeholder="請輸入車輛數"
+          ng-model="data.CarNumber" >
+      </div>
+    </div>
+    <div class="form-group 
+        {{checkInteger(data.DriverWorkingHourLimit)?'':'has-error'}}">
+      <label class="col-sm-3 control-label">駕駛工作時間限制：</label>
+      <div class="col-sm-6">
+        <input type="number" integer required
+          class="form-control" 
+          placeholder="請輸入駕駛工作時間限制"
+          ng-model="data.DriverWorkingHourLimit" >
+      </div>
+      <label class="col-sm-3">(單位時間)</label>
+    </div>
+    <div class="form-group 
+        {{checkInteger(data.CarSpeed)?'':'has-error'}}">
+      <label class="col-sm-3 control-label">車輛速度：</label>
+      <div class="col-sm-6">
+        <input type="number" integer required
+          class="form-control" 
+          placeholder="請輸入車輛速度"
+          ng-model="data.CarSpeed" >
+      </div>
+      <label class="col-sm-3">(單位長度/單位時間)</label>
+    </div>
+    <div class="form-group 
+        {{checkInteger(data.MistakeScope)?'':'has-error'}}">
+      <label class="col-sm-3 control-label">可接受誤差時間：</label>
+      <div class="col-sm-6">
+        <input type="number" integer required
+          class="form-control" 
+          placeholder="請輸入可接受誤差時間"
+          ng-model="data.MistakeScope" >
+      </div>
+      <label class="col-sm-3">(單位時間)</label>
+    </div>
+    <div class="form-group 
+        {{checkInteger(data.TravelTimeLimit)?'':'has-error'}}">
+      <label class="col-sm-3 control-label">乘坐時間限制：</label>
+      <div class="col-sm-6">
+        <input type="number" integer required
+          class="form-control" 
+          placeholder="請輸入乘坐時間限制"
+          ng-model="data.TravelTimeLimit" >
+      </div>
+      <label class="col-sm-3">(單位時間)</label>
+    </div>
+    <hr/>
+    <div class="form-control btn btn-default" ng-click="add($index)">
+      <span class="glyphicon glyphicon-plus"></span>
+    </div>
+  </div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>起點X座標(單位長度)</th>
+        <th>起點Y座標(單位長度)</th>
+        <th>終點X座標(單位長度)</th>
+        <th>終點Y座標(單位長度)</th>
+        <th>搭車時間(單位時間)</th>
+        <th>刪除</th>
+      <tr/>
+    </thead>
+    <tbody>
+      <tr ng-show="data.TargetList.length==0"><td colspan="5" class="text-center">沒有資料</td></tr>
+      <tr ng-repeat="target in data.TargetList">
+        <td ng-bind-template="{{$index+1}}">#</td>
+          <td>
+            <div class="form-group {{checkInteger(target.sx)?'':'has-error'}}">
+            <input type="number" integer required 
+              class="form-control" 
+              placeholder="請輸入起點x座標(單位長度)" 
+              ng-model="target.sx">
+          </td>
+          <td>
+            <div class="form-group {{checkInteger(target.sy)?'':'has-error'}}">
+            <input type="number" integer required 
+              class="form-control" 
+              placeholder="請輸入起點y座標(單位長度)" 
+              ng-model="target.sy">
+          </td>
+          <td>
+            <div class="form-group {{checkInteger(target.ex)?'':'has-error'}}">
+            <input type="number" integer required 
+              class="form-control" 
+              placeholder="請輸入終點x座標(單位長度)" 
+              ng-model="target.ex">
+          </td>
+          <td>
+            <div class="form-group {{checkInteger(target.ey)?'':'has-error'}}">
+            <input type="number" integer required 
+              class="form-control" 
+              placeholder="請輸入終點y座標(單位長度)" 
+              ng-model="target.ey">
+          </td>
+          <td>
+            <div class="form-group {{checkInteger(target.time)?'':'has-error'}}">
+            <input type="number" integer required 
+              class="form-control" 
+              placeholder="請輸入搭乘時間(單位時間)" 
+              ng-model="target.time">
+          </td>
+        <td>
+          <div class="form-control btn btn-default" ng-click="delete($index)">
+            <span class="glyphicon glyphicon-remove"></span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>

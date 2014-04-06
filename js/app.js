@@ -1,85 +1,76 @@
 ( function ( angular ) {
-	angular.module("initialSolution", ["ngRoute","ui.bootstrap"])
-		.config(function ( $routeProvider ) {
-	    	$routeProvider.when("/parameterConfig", {templateUrl: "partials/parameterConfig.html",controller: "parameterConfigCtrl"});
-			$routeProvider.when("/importFile", {templateUrl: "partials/importFile.html",controller: "importFileCtrl"});
-			$routeProvider.otherwise({redirectTo: "/parameterConfig"});
-		})
-		.value('dataObj', {
-			'StartCoordinate' : {
+	angular.module("initialSolution", ["initialSolution.controller","ui.bootstrap"])
+		.value( 'Util',{
+			toPoint : function( x, y ) { 
+				return { x:x, y:y }; 
+			},
+			getLength : function ( point1, point2 ) {
+				return Math.pow(
+					Math.pow( Math.abs( point1.x-point2.x ), 2 )+
+					Math.pow( Math.abs( point1.y-point2.y ), 2 ),
+					0.5 );
+			},
+			getJourneyTime : function ( point1, point2, Speed ) {
+				return getLength( point1, point2 ) / Speed;
+			},
+			hasAbilityService : function (dataObj, point, client) {
+				var toClientTime = getJourneyTime( point, client.StartPoint, CarSpeed );
+				var toDestinationTime = getJourneyTime( client.StartPoint, client.EndPoint, CarSpeed );
+				return (client.time+dataObj.MistakeScope) >= toClientTime &&
+					// 檢查是否可以即時接到客戶
+					dataObj.TravelTimeLimit >= toDestinationTime
+					// 檢查旅程是否超過乘客乘車時間限制
+			}
+		} )
+		.value('Parameter', {
+			'Site' : {
 				'x': undefined, 
 				'y': undefined
 			},
-			'CarNumber' : undefined,
-			'DriverWorkingHourLimit' : undefined,
-			'CarSpeed' : undefined,
-			'MistakeScope' : undefined,
-			'TravelTimeLimit' : undefined,
-			'TargetList' : []
+			'Car' : {
+				'K' : undefined,
+				'C' : undefined,
+				'S' : undefined,
+				'WT' : undefined,
+				'Speed' : undefined
+			},
+			'Client' : {
+				'WS' : undefined,
+				'R' : undefined,
+				'List' : []
+			}
 		} )
-		.controller( "parameterConfigCtrl", function( $scope, dataObj ) {
-			$scope.data = dataObj;
-
-			$scope.add = function () {
-				$scope.data.TargetList.push( {
-					'sx': 0,
-					'sy': 0,
-					'ex': 0,
-					'ey': 0,
-					'time':0 
-				} );
-			};
-
-			$scope.delete = function ( index ) { $scope.data.TargetList.splice( index, 1 ); };
-
-			$scope.checkInteger = function ( value ){ return /^\d+$/.test(value); };
-		} )
-		.controller( "importFileCtrl", function( $scope, dataObj, $rootScope ) {
-			var paserData = function ( result ) {
-				var dataAry = result.trim().split(/\n/)
-					.map( function (rec) { return rec.replace(/\s/g,''); } );
-				if ( !/^\d+(\,\d+){6}$/.test( dataAry[0] ) )
-					throw 'first line error';
-				else {
-					var tmp = dataAry[0].split(",");
-					$scope.data.StartCoordinate.x = Number(tmp[0])
-					$scope.data.StartCoordinate.y = Number(tmp[1])
-					$scope.data.CarNumber = Number(tmp[2])
-					$scope.data.DriverWorkingHourLimit = Number(tmp[3])
-					$scope.data.CarSpeed = Number(tmp[4])
-					$scope.data.MistakeScope = Number(tmp[5])
-					$scope.data.TravelTimeLimit = Number(tmp[6])
-					$scope.data.TargetList.splice(0);
+		.factory( 'ParameterInterface', function ( Parameter, Util ) {
+			return {
+				setSite : function( x, y ) {
+					Parameter.Site.x = x;
+					Parameter.Site.y = y;
+				},
+				setCar : function ( k, c, s, wt, speed ) {
+					Parameter.Car.K = k;
+					Parameter.Car.C = c;
+					Parameter.Car.S = s;
+					Parameter.Car.WT = wt;
+					Parameter.Car.Speed = speed;
+				},
+				setClient : function ( ws, r) {
+					Parameter.Client.WS = ws;
+					Parameter.Client.R = r;
+				},
+				addClient : function( start_x, start_y, end_x, end_y, time  ) {
+					Parameter.Client.List.push( {
+						o: Util.toPoint( start_x, start_y ),
+						d: Util.toPoint( end_x, end_y ),
+						Time : time
+					} );
+				},
+				deleteClient : function( index ) {
+					Parameter.Client.List.splice( index, 1 );
+				},
+				deleteAllClient : function() {
+					Parameter.Client.List.splice( 0 );
 				}
-
-				dataAry.splice(1).forEach( function ( rec, index ) {
-					if ( !/^\d+(\,\d+){4}$/.test( rec ) )
-						throw (index+2)+' line error';
-					else {
-						var tmp = rec.split(",");
-						$scope.data.TargetList.push({
-							'sx': Number(tmp[0]),
-							'sy': Number(tmp[1]),
-							'ex': Number(tmp[2]),
-							'ey': Number(tmp[3]),
-							'time':Number(tmp[4]) 
-						});
-					}
-				} );
-			};
-
-			window.readFile = function() {
-			    file = arguments[0].files[0];
-			    var fReader = new FileReader();           
-			    fReader.onload = function (event) {
-			        paserData ( event.target.result );
-			        $rootScope.$digest();
-			    };
-
-			    fReader.readAsText(file);
-			};
-
-			$scope.data = dataObj;
-		} )
+			}
+		} );
 
 } ) ( angular );

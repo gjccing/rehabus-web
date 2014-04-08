@@ -1,28 +1,27 @@
 ( function ( angular ) {
 	angular.module("initialSolution", ["initialSolution.controller","ui.bootstrap"])
-		.value( 'Util',{
-			toPoint : function( x, y ) { 
-				return { x:x, y:y }; 
-			},
-			getLength : function ( point1, point2 ) {
-				return Math.pow(
-					Math.pow( Math.abs( point1.x-point2.x ), 2 )+
-					Math.pow( Math.abs( point1.y-point2.y ), 2 ),
-					0.5 );
-			},
-			getJourneyTime : function ( point1, point2, Speed ) {
-				return getLength( point1, point2 ) / Speed;
-			},
-			hasAbilityService : function (dataObj, point, client) {
-				var toClientTime = getJourneyTime( point, client.StartPoint, CarSpeed );
-				var toDestinationTime = getJourneyTime( client.StartPoint, client.EndPoint, CarSpeed );
-				return (client.time+dataObj.MistakeScope) >= toClientTime &&
-					// 檢查是否可以即時接到客戶
-					dataObj.TravelTimeLimit >= toDestinationTime
-					// 檢查旅程是否超過乘客乘車時間限制
-			}
-		} )
+		// .value( 'Util',
+		// 	getLength : function ( point1, point2 ) {
+		// 		return Math.pow(
+		// 			Math.pow( Math.abs( point1.x-point2.x ), 2 )+
+		// 			Math.pow( Math.abs( point1.y-point2.y ), 2 ),
+		// 			0.5 );
+		// 	},
+		// 	getJourneyTime : function ( point1, point2, Speed ) {
+		// 		return getLength( point1, point2 ) / Speed;
+		// 	}
+		// 	// ,
+		// 	// hasAbilityService : function (dataObj, point, client) {
+		// 	// 	var toClientTime = getJourneyTime( point, client.StartPoint, CarSpeed );
+		// 	// 	var toDestinationTime = getJourneyTime( client.StartPoint, client.EndPoint, CarSpeed );
+		// 	// 	return (client.time+dataObj.MistakeScope) >= toClientTime &&
+		// 	// 		// 檢查是否可以即時接到客戶
+		// 	// 		dataObj.TravelTimeLimit >= toDestinationTime
+		// 	// 		// 檢查旅程是否超過乘客乘車時間限制
+		// 	// }
+		// } )
 		.value('Parameter', {
+			lock : false,
 			'Site' : {
 				'x': undefined, 
 				'y': undefined
@@ -40,7 +39,10 @@
 				'List' : []
 			}
 		} )
-		.factory( 'ParameterInterface', function ( Parameter, Util ) {
+		.factory( 'ParameterInterface', function ( Parameter ) {
+			var toPoint = function( x, y ) { 
+				return { x:x, y:y }; 
+			};
 			return {
 				setSite : function( x, y ) {
 					Parameter.Site.x = x;
@@ -59,8 +61,8 @@
 				},
 				addClient : function( start_x, start_y, end_x, end_y, time  ) {
 					Parameter.Client.List.push( {
-						o: Util.toPoint( start_x, start_y ),
-						d: Util.toPoint( end_x, end_y ),
+						o: toPoint( start_x, start_y ),
+						d: toPoint( end_x, end_y ),
 						Time : time
 					} );
 				},

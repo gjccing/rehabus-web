@@ -21,7 +21,6 @@
 		// 	// }
 		// } )
 		.value('Parameter', {
-			lock : false,
 			'Site' : {
 				'x': undefined, 
 				'y': undefined

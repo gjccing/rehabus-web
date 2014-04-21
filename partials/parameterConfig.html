@@ -1,195 +1,194 @@
-<fieldset ng-disabled="data.lock">
-  <div ng-controller="importFileCtrl" >
-    <h4 class="form-control btn btn-default" 
-      ng-click="ifwCollapsed = !ifwCollapsed">
-      <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': ifwCollapsed, 'glyphicon-chevron-up': !ifwCollapsed}"></i>
-      <span class="glyphicon glyphicon-file"></span>
-      導入檔案
-    </h4>
-    <div collapse="ifwCollapsed">
-      <ng-include src="'partials/importFile.html'" ></ng-include>
+
+<div ng-controller="importFileCtrl" >
+  <h4 class="form-control btn btn-default" 
+    ng-click="ifwCollapsed = !ifwCollapsed">
+    <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': ifwCollapsed, 'glyphicon-chevron-up': !ifwCollapsed}"></i>
+    <span class="glyphicon glyphicon-file"></span>
+    導入檔案
+  </h4>
+  <div collapse="ifwCollapsed">
+    <ng-include src="'partials/importFile.html'" ></ng-include>
+  </div>
+</div>
+<hr/>
+<div ng-form="param" class="form-horizontal">
+  <div class="form-group 
+      {{param.sx.$valid&&param.sy.$valid?'':'has-error'}}">
+    <label class="col-sm-3 control-label">發車座標：</label>
+    <div class="col-sm-4">
+      <input name="sx"
+        type="number" 
+        required
+        class="form-control" 
+        placeholder="請輸入x座標(單位長度)"
+        ng-model="data.Site.x" >
+    </div>
+    <div class="col-sm-4">
+      <input name="sy"
+        type="number"
+        required
+        class="form-control" 
+        placeholder="請輸入y座標(單位長度)"
+        ng-model="data.Site.y" >
     </div>
   </div>
   <hr/>
-  <div ng-form="param" class="form-horizontal">
-    <div class="form-group 
-        {{param.sx.$valid&&param.sy.$valid?'':'has-error'}}">
-      <label class="col-sm-3 control-label">發車座標：</label>
-      <div class="col-sm-4">
+  <div class="form-group 
+      {{param.ck.$valid?'':'has-error'}}">
+    <label class="col-sm-3 control-label">車輛數：</label>
+    <div class="col-sm-8">
+      <input name="ck"
+        type="number"
+        required
+        class="form-control" 
+        placeholder="請輸入車輛數"
+        ng-model="data.Car.K" >
+    </div>
+  </div>
+  <div class="form-group 
+      {{param.cc.$valid?'':'has-error'}}">
+    <label class="col-sm-3 control-label">車容量：</label>
+    <div class="col-sm-6">
+      <input name="cc"
+        type="number" 
+        required
+        class="form-control" 
+        placeholder="請輸入車容量限制"
+        ng-model="data.Car.C" >
+    </div>
+    <label class="col-sm-3">(人數)</label>
+  </div>
+  <div class="form-group 
+      {{param.cs.$valid?'':'has-error'}}">
+    <label class="col-sm-3 control-label">服務時間：</label>
+    <div class="col-sm-6">
+      <input name="cs"
+        type="number"
+        required
+        class="form-control" 
+        placeholder="請輸入服務時間"
+        ng-model="data.Car.S" >
+    </div>
+    <label class="col-sm-3">(單位時間)</label>
+  </div>
+  <div class="form-group 
+      {{param.cwt.$valid?'':'has-error'}}">
+    <label class="col-sm-3 control-label">駕駛工作時間限制：</label>
+    <div class="col-sm-6">
+      <input name="cwt"
+        type="number"
+        required
+        class="form-control" 
+        placeholder="請輸入駕駛工作時間限制"
+        ng-model="data.Car.WT" >
+    </div>
+    <label class="col-sm-3">(單位時間)</label>
+  </div>
+  <div class="form-group 
+      {{param.cspeed.$valid?'':'has-error'}}">
+    <label class="col-sm-3 control-label">車輛速度：</label>
+    <div class="col-sm-6">
+      <input name="cspeed"
+        type="number"
+        required
+        class="form-control" 
+        placeholder="請輸入車輛速度"
+        ng-model="data.Car.Speed" >
+    </div>
+    <label class="col-sm-3">(單位長度/單位時間)</label>
+  </div>
+  <hr>
+  <div class="form-group 
+      {{param.cws.$valid?'':'has-error'}}">
+    <label class="col-sm-3 control-label">時間窗：</label>
+    <div class="col-sm-6">
+      <input name="cws"
+        type="number"
+        required
+        class="form-control" 
+        placeholder="請輸入時間窗"
+        ng-model="data.Client.WS" >
+    </div>
+    <label class="col-sm-3">(單位時間)</label>
+  </div>
+  <div class="form-group 
+      {{param.cr.$valid?'':'has-error'}}">
+    <label class="col-sm-3 control-label">乘坐時間限制：</label>
+    <div class="col-sm-6">
+      <input name="cr"
+        type="number"
+        required
+        class="form-control" 
+        placeholder="請輸入乘坐時間限制"
+        ng-model="data.Client.R" >
+    </div>
+    <label class="col-sm-3">(單位時間)</label>
+  </div>
+</div>
+<div class="form-control btn btn-default" ng-click="add()">
+  <span class="glyphicon glyphicon-plus"></span>
+</div>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>起點X座標(單位長度)</th>
+      <th>起點Y座標(單位長度)</th>
+      <th>終點X座標(單位長度)</th>
+      <th>終點Y座標(單位長度)</th>
+      <th>搭車時間(單位時間)</th>
+      <th>刪除</th>
+    <tr/>
+  </thead>
+  <tbody>
+    <tr ng-show="data.Cient.List.length==0"><td colspan="7" class="text-center">沒有資料</td></tr>
+    <tr ng-repeat="client in data.Client.List" ng-form="cl" >
+      <td ng-bind-template="{{$index+1}}">#</td>
+      <td class="form-group {{cl.sx.$valid?'':'has-error'}}">
         <input name="sx"
-          type="number" 
-          required
+          type="number"
+          required 
           class="form-control" 
-          placeholder="請輸入x座標(單位長度)"
-          ng-model="data.Site.x" >
-      </div>
-      <div class="col-sm-4">
+          placeholder="請輸入起點x座標(單位長度)" 
+          ng-model="client.o.x">
+      </td>
+      <td class="form-group {{cl.sy.$valid?'':'has-error'}}">
         <input name="sy"
           type="number"
-          required
+          required 
           class="form-control" 
-          placeholder="請輸入y座標(單位長度)"
-          ng-model="data.Site.y" >
-      </div>
-    </div>
-    <hr/>
-    <div class="form-group 
-        {{param.ck.$valid?'':'has-error'}}">
-      <label class="col-sm-3 control-label">車輛數：</label>
-      <div class="col-sm-8">
-        <input name="ck"
+          placeholder="請輸入起點y座標(單位長度)" 
+          ng-model="client.o.y">
+      </td>
+      <td class="form-group {{cl.ex.$valid?'':'has-error'}}">
+        <input name="ex"
           type="number"
-          required
+          required 
           class="form-control" 
-          placeholder="請輸入車輛數"
-          ng-model="data.Car.K" >
-      </div>
-    </div>
-    <div class="form-group 
-        {{param.cc.$valid?'':'has-error'}}">
-      <label class="col-sm-3 control-label">車容量：</label>
-      <div class="col-sm-6">
-        <input name="cc"
-          type="number" 
-          required
-          class="form-control" 
-          placeholder="請輸入車容量限制"
-          ng-model="data.Car.C" >
-      </div>
-      <label class="col-sm-3">(人數)</label>
-    </div>
-    <div class="form-group 
-        {{param.cs.$valid?'':'has-error'}}">
-      <label class="col-sm-3 control-label">服務時間：</label>
-      <div class="col-sm-6">
-        <input name="cs"
+          placeholder="請輸入終點x座標(單位長度)" 
+          ng-model="client.d.x">
+      </td>
+      <td class="form-group {{cl.ey.$valid?'':'has-error'}}">
+        <input name="ey"
           type="number"
-          required
+          required 
           class="form-control" 
-          placeholder="請輸入服務時間"
-          ng-model="data.Car.S" >
-      </div>
-      <label class="col-sm-3">(單位時間)</label>
-    </div>
-    <div class="form-group 
-        {{param.cwt.$valid?'':'has-error'}}">
-      <label class="col-sm-3 control-label">駕駛工作時間限制：</label>
-      <div class="col-sm-6">
-        <input name="cwt"
+          placeholder="請輸入終點y座標(單位長度)" 
+          ng-model="client.d.y">
+      </td>
+      <td class="form-group {{cl.t.$valid?'':'has-error'}}">
+        <input name="t"
           type="number"
-          required
+          required 
           class="form-control" 
-          placeholder="請輸入駕駛工作時間限制"
-          ng-model="data.Car.WT" >
-      </div>
-      <label class="col-sm-3">(單位時間)</label>
-    </div>
-    <div class="form-group 
-        {{param.cspeed.$valid?'':'has-error'}}">
-      <label class="col-sm-3 control-label">車輛速度：</label>
-      <div class="col-sm-6">
-        <input name="cspeed"
-          type="number"
-          required
-          class="form-control" 
-          placeholder="請輸入車輛速度"
-          ng-model="data.Car.Speed" >
-      </div>
-      <label class="col-sm-3">(單位長度/單位時間)</label>
-    </div>
-    <hr>
-    <div class="form-group 
-        {{param.cws.$valid?'':'has-error'}}">
-      <label class="col-sm-3 control-label">時間窗：</label>
-      <div class="col-sm-6">
-        <input name="cws"
-          type="number"
-          required
-          class="form-control" 
-          placeholder="請輸入時間窗"
-          ng-model="data.Client.WS" >
-      </div>
-      <label class="col-sm-3">(單位時間)</label>
-    </div>
-    <div class="form-group 
-        {{param.cr.$valid?'':'has-error'}}">
-      <label class="col-sm-3 control-label">乘坐時間限制：</label>
-      <div class="col-sm-6">
-        <input name="cr"
-          type="number"
-          required
-          class="form-control" 
-          placeholder="請輸入乘坐時間限制"
-          ng-model="data.Client.R" >
-      </div>
-      <label class="col-sm-3">(單位時間)</label>
-    </div>
-  </div>
-  <div class="form-control btn btn-default" ng-click="add()">
-    <span class="glyphicon glyphicon-plus"></span>
-  </div>
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>起點X座標(單位長度)</th>
-        <th>起點Y座標(單位長度)</th>
-        <th>終點X座標(單位長度)</th>
-        <th>終點Y座標(單位長度)</th>
-        <th>搭車時間(單位時間)</th>
-        <th>刪除</th>
-      <tr/>
-    </thead>
-    <tbody>
-      <tr ng-show="data.Cient.List.length==0"><td colspan="7" class="text-center">沒有資料</td></tr>
-      <tr ng-repeat="client in data.Client.List" ng-form="cl" >
-        <td ng-bind-template="{{$index+1}}">#</td>
-        <td class="form-group {{cl.sx.$valid?'':'has-error'}}">
-          <input name="sx"
-            type="number"
-            required 
-            class="form-control" 
-            placeholder="請輸入起點x座標(單位長度)" 
-            ng-model="client.o.x">
-        </td>
-        <td class="form-group {{cl.sy.$valid?'':'has-error'}}">
-          <input name="sy"
-            type="number"
-            required 
-            class="form-control" 
-            placeholder="請輸入起點y座標(單位長度)" 
-            ng-model="client.o.y">
-        </td>
-        <td class="form-group {{cl.ex.$valid?'':'has-error'}}">
-          <input name="ex"
-            type="number"
-            required 
-            class="form-control" 
-            placeholder="請輸入終點x座標(單位長度)" 
-            ng-model="client.d.x">
-        </td>
-        <td class="form-group {{cl.ey.$valid?'':'has-error'}}">
-          <input name="ey"
-            type="number"
-            required 
-            class="form-control" 
-            placeholder="請輸入終點y座標(單位長度)" 
-            ng-model="client.d.y">
-        </td>
-        <td class="form-group {{cl.t.$valid?'':'has-error'}}">
-          <input name="t"
-            type="number"
-            required 
-            class="form-control" 
-            placeholder="請輸入搭乘時間(單位時間)" 
-            ng-model="client.Time">
-        </td>
-        <td>
-          <div class="form-control btn btn-default" ng-click="delete($index)">
-            <span class="glyphicon glyphicon-remove"></span>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</fieldset>
+          placeholder="請輸入搭乘時間(單位時間)" 
+          ng-model="client.Time">
+      </td>
+      <td>
+        <div class="form-control btn btn-default" ng-click="delete($index)">
+          <span class="glyphicon glyphicon-remove"></span>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

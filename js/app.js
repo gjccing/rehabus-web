@@ -22,8 +22,12 @@
 		// } )
 		.value('Parameter', {
 			'Site' : {
-				'x': undefined, 
-				'y': undefined
+				'name':'site',
+				'p':{
+					'x': undefined, 
+					'y': undefined
+				},
+				't': 0
 			},
 			'Car' : {
 				'K' : undefined,
@@ -44,8 +48,8 @@
 			};
 			return {
 				setSite : function( x, y ) {
-					Parameter.Site.x = x;
-					Parameter.Site.y = y;
+					Parameter.Site.p.x = x;
+					Parameter.Site.p.y = y;
 				},
 				setCar : function ( k, c, s, wt, speed ) {
 					Parameter.Car.K = k;
@@ -58,11 +62,16 @@
 					Parameter.Client.WS = ws;
 					Parameter.Client.R = r;
 				},
-				addClient : function( start_x, start_y, end_x, end_y, time  ) {
+				addClient : function( start_x, start_y, end_x, end_y, time1, time2  ) {
 					Parameter.Client.List.push( {
-						o: toPoint( start_x, start_y ),
-						d: toPoint( end_x, end_y ),
-						Time : time
+						o: {
+							p:toPoint( start_x, start_y ),
+							t:time1
+						},
+						d: {
+							p:toPoint( end_x, end_y ),
+							t:time2
+						}
 					} );
 				},
 				deleteClient : function( index ) {

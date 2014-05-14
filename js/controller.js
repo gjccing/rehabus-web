@@ -4,7 +4,7 @@
 			angular.extend( $scope, {
 				data : Parameter,
 				add : function () {
-					ParameterInterface.addClient(0,0,0,0,0);
+					ParameterInterface.addClient(0,0,0,0,0,0);
 				},
 				delete : function ( index ) { 
 					ParameterInterface.deleteClient( index ); 
@@ -36,11 +36,11 @@
 
 				ParameterInterface.deleteAllClient();
 				dataAry.splice(3).forEach( function ( rec, index ) {
-					if ( !/^\d+(\,\d+){4}$/.test( rec ) )
+					if ( !/^\d+(\,\d+){5}$/.test( rec ) )
 						throw (index+4)+' line error :'+rec;
 					else {
 						var tmp = rec.split(",").map( function ( rec ) { return Number(rec); } );
-						ParameterInterface.addClient( tmp[0], tmp[1], tmp[2], tmp[3], tmp[4] );
+						ParameterInterface.addClient( tmp[0], tmp[1], tmp[2], tmp[3], tmp[4], tmp[5] );
 					}
 				} );
 
@@ -74,6 +74,65 @@
 				
 				return tl;
 			};
+
+			var insertPoint = function ( path, pp ) {
+				for ( var i = 0 ; i < path.length ;  i++ ) {
+					if ( pp.rp.t < path[i].rp.t ) {
+						path.splice( i, 0, pp );
+						return path
+					}
+				}
+
+				path.push( pp );
+				return path;
+			}
+
+			var getPossiblePath = function( oPath, param ) {
+				// 合理編排路徑
+				var pathList = param.Client.List.map( function ( rec ) {
+					var tmp = oPath.slice( 1,oPath.length-1 ); // 排除場站點
+					insertPoint( tmp, {rp:rec.o} );
+					insertPoint( tmp, {rp:rec.d} );
+					return tmp;
+				} );
+				// 前後插入場站
+				pathList.forEach( function ( rec ) {
+					rec.splice( 0, 0, { rp: angular.copy( param.Site ) } );
+					rec.push( { rp: angular.copy( param.Site ) } );
+				} );
+				// 計算各點抵達即離開時間
+				// 限制式篩選
+				return[];
+			};
+
+			$scope.execute = function () {
+				var param = angular.copy( Parameter );
+				// 設定參數
+				param.Client.List
+					.sort( function ( a, b ) { return a.o.t-b.o.t; } )
+					.forEach( function ( rec, idx ) { 
+						rec.o.name='c'+idx+'+';
+						rec.d.name='c'+idx+'-';
+					} );
+				// 依照開始時間窗先後順序對客戶名單進行排序
+				// 標記客戶需求點
+				console.log( param.Client.List );
+				var CarPathLog = [];
+				for ( var k = 1 ; k <= param.Car.K ; k++ ) {
+					CarPathLog[k] = [ { rp : angular.copy( param.Site ) } ];
+					/* { at lt rp } */
+					var pathList = undefined ; 
+					while ( ( pl = getPossiblePath( CarPathLog[k].path, param ) ).length != 0 ) { // 找出可行路徑
+						// 決定路徑
+						// 改變路徑
+					}
+				}
+				console.log( CarPathLog );
+			}
+		} )
+} ) ( angular );
+
+/*
 
 			var getPossiblePoint = function ( pathLog, param ) {
 				var now = pathLog[pathLog.length-1];
@@ -197,6 +256,4 @@
 				}
 				console.log( CarLog );
 			};
-
-		} )
-} ) ( angular );
+*/

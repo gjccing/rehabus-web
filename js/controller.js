@@ -109,6 +109,12 @@
 						return cur;
 					} );
 				} );
+				pathList.forEach( function ( path ) { 
+					path[0].at = undefined; 
+					path[0].rp.t = undefined;
+					path[path.length-1].lt = undefined; 
+					path[path.length-1].rp.t = undefined;
+				} );
 				// 計算各點抵達即離開時間
 				var condition = [
 					function ( path, param ) { // 車容量限制
@@ -191,136 +197,11 @@
 						// 改變路徑
 					}
 				}
-				CarPathLog.forEach( function ( path ) {
-
+				console.log( 'all car path', CarPathLog );
+				console.log( 'error client list', param.Client.List );
+				$scope.exeLog = CarPathLog.filter( function ( path ) { 
+					return path.length > 1 ; 
 				} );
-				console.log( CarPathLog );
 			}
 		} )
 } ) ( angular );
-
-/*
-
-			var getPossiblePoint = function ( pathLog, param ) {
-				var now = pathLog[pathLog.length-1];
-				now.pcl = param.Client.List.map( function ( rec ) {
-					var res = {};
-					res.jt = getJT(now.point, rec.o, param.Car.Speed);
-					res.at = now.lt+res.jt;
-					res.lt = param.Car.S+( ( res.at < rec.Time-param.Client.WS )? rec.Time-param.Client.WS : res.at );
-					res.wt = res.lt-now.lt;
-					var backJT = getJTAry( 
-							[ rec.o ]
-								.concat( now.pl.map( function ( rec ) { return rec.d; } ) )
-								.concat( rec.d, param.Site ),
-							param.Car.Speed );
-					var temp = 0;
-					res.backJTS = backJT.map( function ( rec ) {  
-						var res = rec+temp;
-						temp = res+param.Car.S;
-						return res;
-					} );
-					res.client = rec;
-
-					if ( pathLog.length == 1 && res.jt < ( rec.Time-param.Client.WS ) ) {
-						res.at = rec.Time-param.Client.WS;
-						res.lt = param.Car.S+res.at;
-						res.slt = res.at-res.jt;
-					} // 站場出發時間調整
-					return res;
-				} ).filter( function ( prec ) {
-					return ( // 車容量限制
-							( now.pl.length+1 ) <= param.Car.C 
-						) && ( // 時間窗限制
-							prec.at < ( prec.client.Time+param.Client.WS )
-						) && ( // 乘客搭乘時間限制
-							now.pl.every( function ( rec, idx ) {
-								return rec.jt+prec.wt+prec.jt+prec.backJTS[idx] < param.Client.R;
-							} )
-						) && ( // 接乘客戶搭乘時間限制
-							prec.backJTS[prec.backJTS.length-2] < param.Client.R
-						) && ( // 駕駛時間限制
-							prec.lt-(prec.slt!=undefined?prec.slt:pathLog[0].lt)+prec.backJTS[prec.backJTS.length-1] 
-								< param.Car.WT
-						);
-				} );
-				// 取出可服務且未服務客戶名單
-				var possiblePoint = now.pcl.map( function ( rec ) { 
-						return rec.client.o; 
-					} ).concat( now.pl.map( function ( rec ) { 
-						return rec.d; 
-					} ) );
-				// 可服務且未服務客戶+乘客需求點；
-				// 處理程序自然的造成先考慮未服務的需求點在考慮返程
-				if ( pathLog.length > 1 && now.point != param.Site )
-					possiblePoint.push( param.Site );
-				// 出站後增加回站的選項
-				return possiblePoint;
-			};
-
-			var toPoint = function ( pathLog, point, param ) {
-				var nowp = pathLog[pathLog.length-1];
-				var njt = getJT( nowp.point, point, param.Car.Speed );
-				var newp = {
-					at : nowp.lt+njt,
-					lt : nowp.lt+njt+param.Car.S,
-					pl : nowp.pl.filter( function ( rec ) {
-						rec.jt += njt;
-						if ( point != rec.d ) {
-							rec.jt += param.Car.S;
-							return true; 
-						} else 
-							return false; 
-					} ), // 乘車時間累加&剃除下車乘客(多人)
-					point : point
-				};
-				var prediction = nowp.pcl.find( function ( rec ) { 
-					return rec.client.o == point; 
-				} ); // 找出上車客人(1人)
-				if ( prediction ) {
-					param.Client.List.splice( param.Client.List.indexOf(prediction.client), 1 );
-					// 從未服務名單去除
-					newp.lt = prediction.lt; 
-					// 得出最後發車時間
-					prediction.client.jt = 0;
-					newp.pl.push( prediction.client );
-					// 搭車
-
-					if ( pathLog.length == 1 && njt < ( prediction.client.Time-param.Client.WS ) ) {
-						newp.at = prediction.client.Time-param.Client.WS;
-						newp.lt = param.Car.S+newp.at;
-						pathLog[0].lt = newp.at-njt;
-					}
-					// 站場出發時間調整
-
-					// now.pl.forEach( function ( rec ) { rec.jt = rec.jt+newp.lt-nowp.lt; } );
-					// // 乘客乘車時間累加
-				} // 上車程序
-				pathLog.push( newp );
-			};
-
-			$scope.execute = function () {
-				var param = angular.copy( Parameter );
-				// 設定參數
-				param.Client.List.sort( function ( a, b ) {
-					return a.Time-b.Time;
-				} ).forEach( function (rec) {
-					rec.jt = 0;
-				} );
-				// 依照時間窗先後順序對客戶名單進行排序
-				var CarLog = [];
-				for ( var k = 1 ; k <= param.Car.K ; k++ ) {
-					CarLog[k] = pathLog = [ {
-						at : 0,
-						lt : 0,
-						pl : [],
-						point : param.Site
-					} ];
-					for ( var pl = undefined ; 
-							( pl = getPossiblePoint( pathLog, param ) ).length != 0 ; 
-							toPoint( pathLog, pl[0], param) 
-					);
-				}
-				console.log( CarLog );
-			};
-*/

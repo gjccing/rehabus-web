@@ -15,19 +15,19 @@
 			var paserData = function ( result ) {
 				var dataAry = result.trim().split(/\n/)
 					.map( function (rec) { return rec.replace(/\s/g,''); } );
-				if ( !/^\d+\,\d+$/.test( dataAry[0] ) )
+				if ( !/^(\d+(\.\d+)*)\,(\d+(\.\d+)*)$/.test( dataAry[0] ) )
 					throw 'first line error :'+dataAry[0];
 				else {
 					var tmp = dataAry[0].split(",").map( function ( rec ) { return Number(rec); } );
 					ParameterInterface.setSite( tmp[0], tmp[1] );
 				}
-				if ( !/^\d+\,\d+\,\d+\,\d+\,\d+$/.test( dataAry[1] ) )
+				if ( !/^(\d+(\.\d+)*)(\,(\d+(\.\d+)*)){4}$/.test( dataAry[1] ) )
 					throw 'second line error :'+dataAry[1];
 				else {
 					var tmp = dataAry[1].split(",").map( function ( rec ) { return Number(rec); } );
 					ParameterInterface.setCar( tmp[0], tmp[1], tmp[2], tmp[3], tmp[4] );
 				}
-				if ( !/^\d+\,\d+$/.test( dataAry[2] ) )
+				if ( !/^(\d+(\.\d+)*)\,(\d+(\.\d+)*)$/.test( dataAry[2] ) )
 					throw 'third line error :'+dataAry[2];
 				else {
 					var tmp = dataAry[2].split(",").map( function ( rec ) { return Number(rec); } );
@@ -36,7 +36,7 @@
 
 				ParameterInterface.deleteAllClient();
 				dataAry.splice(3).forEach( function ( rec, index ) {
-					if ( !/^\d+(\,\d+){5}$/.test( rec ) )
+					if ( !/^(\d+(\.\d+)*)(\,(\d+(\.\d+)*)){5}$/.test( rec ) )
 						throw (index+4)+' line error :'+rec;
 					else {
 						var tmp = rec.split(",").map( function ( rec ) { return Number(rec); } );
@@ -101,11 +101,11 @@
 					path.reduce( function ( pre, cur, index ) {
 						var jt = getJT( pre.rp.p, cur.rp.p, param.Car.Speed );
 						if ( index == 1 )
-							pre.lt = ( jt < ( cur.rp.t-param.Client.WS ) )? jt : ( ( cur.rp.t-param.Client.WS )-jt );
+							pre.lt = ( jt >= ( cur.rp.t-param.Client.WS ) )? jt : ( ( cur.rp.t-param.Client.WS )-jt );
 						// 剛出場站，調整場站離開時間。提早：離開時間設定為剛好於時間窗開啟到達；晚到：假設落於時間窗內。
 
 						cur.at = pre.lt+jt;
-						cur.lt = param.Car.S+( cur.at < ( cur.rp.t-param.Client.WS ) ) ? ( cur.rp.t-param.Client.WS ) : cur.at ;
+						cur.lt = param.Car.S+( ( cur.at < ( cur.rp.t-param.Client.WS ) ) ? ( cur.rp.t-param.Client.WS ) : cur.at );
 						return cur;
 					} );
 				} );
@@ -149,7 +149,7 @@
 				var result = pathList.filter( function ( path, idx ) {
 					return condition.every( function ( confunct, cidx ) {
 						var checkValue = confunct( path, param ); 
-						console.log( checkValue, idx, cidx );
+						// console.log( checkValue, idx, cidx );
 						return checkValue;
 					} );
 				} );
@@ -163,8 +163,8 @@
 				param.Client.List
 					.sort( function ( a, b ) { return a.o.t-b.o.t; } )
 					.forEach( function ( rec, idx ) { 
-						rec.o.name='c'+idx+'+';
-						rec.d.name='c'+idx+'-';
+						rec.o.name='c'+(idx+1)+'+';
+						rec.d.name='c'+(idx+1)+'-';
 					} );
 				// 依照開始時間窗先後順序對客戶名單進行排序
 				// 標記客戶需求點
@@ -191,6 +191,9 @@
 						// 改變路徑
 					}
 				}
+				CarPathLog.forEach( function ( path ) {
+
+				} );
 				console.log( CarPathLog );
 			}
 		} )

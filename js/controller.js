@@ -90,7 +90,7 @@
 					tmp.client = rec;
 					return tmp;
 				} );
-				
+
 				// 依照時間先後編排路徑
 				pathList.forEach( function ( rec ) {
 					rec.splice( 0, 0, { rp: angular.copy( param.Site ) } );
@@ -202,6 +202,22 @@
 				console.log( 'error client list', param.Client.List );
 				$scope.exeLog = CarPathLog.filter( function ( path ) { 
 					return path.length > 1 ; 
+				} );
+				$scope.cost = 1;
+				$scope.tpath = 0;
+				$scope.ttime = 0 ;
+				$scope.exeLog.forEach( function ( path ) {
+					path.reduce( function ( p, c ) { 
+						$scope.tpath += Math.pow(
+							Math.pow( Math.abs( p.rp.p.x-c.rp.p.x ), 2 )+
+							Math.pow( Math.abs( p.rp.p.y-c.rp.p.y ), 2 ), 
+						0.5 )
+						return c;
+					} );
+					path.forEach( function ( point ) {
+						var wt = point.rp.t-param.Client.WS-point.at;
+						$scope.ttime += ( ( wt > 0 )? wt : 0 );
+					} );
 				} );
 			}
 		} )

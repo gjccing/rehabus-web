@@ -83,14 +83,37 @@
 			var getPossiblePath = function( oPath, param ) {
 				var outPath = oPath.slice( 1, oPath.length-1 ); 
 				// 排除場站點
-				var pathList = param.Client.List.map( function ( rec ) {
-					var tmp = angular.copy( outPath );
-					insertPoint( tmp, {rp:rec.o} );
-					insertPoint( tmp, {rp:rec.d} );
-					tmp.client = rec;
-					return tmp;
-				} );
+				// var pathList = param.Client.List.map( function ( rec ) {
+				// 	var tmp = angular.copy( outPath );
+				// 	insertPoint( tmp, {rp:rec.o} );
+				// 	insertPoint( tmp, {rp:rec.d} );
+				// 	tmp.client = rec;
+				// 	return tmp;
+				// } );
+				var pathList = [];
+				param.Client.List.forEach( function ( client ) {
+					var path = angular.copy( outPath );
+					var i = 0 ;
+					while ( i < path.length ) {
+						if ( client.o.t < path[i].rp.t ) {
+							path.splice( i, 0, {rp:client.o} );
+							break;
+						}
 
+						i++ ;
+					}
+
+					if ( i == path.length )
+						path.push( {rp:client.o} );
+
+					while ( i < path.length ) {
+						var tmp = angular.copy( path );
+						tmp.splice( i+1, 0, {rp:client.d} );
+						tmp.client = client;
+						pathList.push( tmp );
+						i++;
+					}
+				} );
 				// 依照時間先後編排路徑
 				pathList.forEach( function ( rec ) {
 					rec.splice( 0, 0, { rp: angular.copy( param.Site ) } );
@@ -183,14 +206,29 @@
 					
 					for ( var ppList = undefined ; ( ppList = getPossiblePath( CarPathLog[k], param ) ).length != 0 ; ) { 
 						// 判斷有無可行路徑
+						ppList.forEach( function ( rec ) {
+							rec.tpath = 0;
+							rec.ttime = 0;
+							rec.reduce( function ( p, c ) { 
+								rec.tpath += Math.pow(
+									Math.pow( Math.abs( p.rp.p.x-c.rp.p.x ), 2 )+
+									Math.pow( Math.abs( p.rp.p.y-c.rp.p.y ), 2 ), 
+								0.5 )
+								return c;
+							} );
+							rec.forEach( function ( point ) {
+								var wt = point.rp.t-param.Client.WS-point.at;
+								rec.ttime += ( ( wt > 0 )? wt : 0 );
+							} );
+						} )
 						var chosePath = ppList.sort( function ( aPath, bPath ) {
-							var aInaccuracy = aPath.slice( 1, aPath.length-1 ).reduce( function ( value, rec ) {
-								value+=Math.abs(rec.at-rec.rp.t);
-							}, 0 );
-							var bInaccuracy = bPath.slice( 1, bPath.length-1 ).reduce( function ( value, rec ) {
-								value+=Math.abs(rec.at-rec.rp.t);
-							}, 0 );
-							return aInaccuracy-bInaccuracy;
+							// var aInaccuracy = aPath.slice( 1, aPath.length-1 ).reduce( function ( value, rec ) {
+							// 	value+=Math.abs(rec.at-rec.rp.t);
+							// }, 0 );
+							// var bInaccuracy = bPath.slice( 1, bPath.length-1 ).reduce( function ( value, rec ) {
+							// 	value+=Math.abs(rec.at-rec.rp.t);
+							// }, 0 );
+							return (aPath.tpath+aPath.ttime)-(bPath.tpath+bPath.ttime);
 						} )[0];
 						// 決定路徑
 						param.Client.List.splice( param.Client.List.indexOf(chosePath.client), 1 );
@@ -207,17 +245,8 @@
 				$scope.tpath = 0;
 				$scope.ttime = 0 ;
 				$scope.exeLog.forEach( function ( path ) {
-					path.reduce( function ( p, c ) { 
-						$scope.tpath += Math.pow(
-							Math.pow( Math.abs( p.rp.p.x-c.rp.p.x ), 2 )+
-							Math.pow( Math.abs( p.rp.p.y-c.rp.p.y ), 2 ), 
-						0.5 )
-						return c;
-					} );
-					path.forEach( function ( point ) {
-						var wt = point.rp.t-param.Client.WS-point.at;
-						$scope.ttime += ( ( wt > 0 )? wt : 0 );
-					} );
+					$scope.tpath+=path.tpath;
+					$scope.ttime+=path.ttime;
 				} );
 			}
 		} )

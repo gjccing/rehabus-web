@@ -28,8 +28,10 @@
     	</h4>
 	</a>
 	<a href="#" class="list-group-item">
-    	<h4 class="list-group-item-heading">目標函數 = 路線成本 x 總路線長度 + 總等待時間 = {{cost}} x {{tpath}} + {{ttime}}
-    		<br/> = {{cost*tpath+ttime}}</h4>
+    	<h4 class="list-group-item-heading row">
+    		<div class="col-sm-8">目標函數 = 路線成本 x 總路線長度 + 總等待時間</div>
+    		<div class="col-md-offset-3 col-sm-9"> = {{cost}} x {{tpath}} + {{ttime}} = {{cost*tpath+ttime}}</div>
+    	</h4>
 	</a>
 </ul>
 <table ng-repeat="path in exeLog" class="table">
@@ -50,6 +52,12 @@
 			<td>{{point.rp.t}}</td>
 			<td>{{point.at}}</td>
 			<td>{{point.lt}}</td>
+		</tr>
+		<tr>
+			<th>此路線長度</th>
+			<th>{{path.tpath}}</th>
+			<th>此路線等待時間</th>
+			<th>{{path.ttime}}</th>
 		</tr>
 	</tbody>
 </table>

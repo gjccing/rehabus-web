@@ -209,11 +209,12 @@
 						ppList.forEach( function ( rec ) {
 							rec.tpath = 0;
 							rec.ttime = 0;
-							rec.reduce( function ( p, c ) { 
-								rec.tpath += Math.pow(
+							rec.reduce( function ( p, c, idx ) { 
+								c.jt = Math.pow(
 									Math.pow( Math.abs( p.rp.p.x-c.rp.p.x ), 2 )+
 									Math.pow( Math.abs( p.rp.p.y-c.rp.p.y ), 2 ), 
 								0.5 )
+								rec.tpath += c.jt;
 								return c;
 							} );
 							rec.forEach( function ( point ) {

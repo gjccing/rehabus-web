@@ -1,15 +1,45 @@
 <div class="form-control btn btn-default" ng-click="execute($index)">
   <span class="glyphicon glyphicon-play"></span>
 </div>
-{{$scope.exeLog}}
+<table ng-if="exeLog" class="table">
+	<tbody>
+		<tr>
+			<td>
+			  <div class="form-group {{param.ck.$valid?'':'has-error'}}">
+			    <label class="col-sm-3 control-label">路線成本：</label>
+			    <div class="col-sm-8">
+			      <input name="ck"
+			        type="number"
+			        required
+			        class="form-control" 
+			        placeholder="請輸入數字"
+			        ng-model="" >
+			    </div>
+			  </div>
+			</td>
+			<td>{{100}}</td>
+			<td>{{100}}</td>
+		</tr>
+	</tbody>
+</table>
 <table ng-repeat="path in exeLog" class="table">
 	<thead>
 		<tr><th colspan="4" class="text-center">車輛 {{$index+1}} 路徑</th></tr>
 	</thead>
 	<thead>
-		<tr><th>站點名稱</th><th>需求時間</th><th>到達時間</th><th>離開時間</th></tr>
+		<tr>
+			<th>站點名稱</th>
+			<th>需求時間</th>
+			<th>到達時間</th>
+			<th>離開時間</th>
+		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="point in path"><td>{{point.rp.name}}</td><td>{{point.rp.t}}</td><td>{{point.at}}</td><td>{{point.lt}}</td></tr>
+		<tr ng-repeat="point in path">
+			<td>{{point.rp.name}}</td>
+			<td>{{point.rp.t}}</td>
+			<td>{{point.at}}</td>
+			<td>{{point.lt}}</td>
+		</tr>
 	</tbody>
 </table>

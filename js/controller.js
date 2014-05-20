@@ -90,6 +90,7 @@
 					tmp.client = rec;
 					return tmp;
 				} );
+				
 				// 依照時間先後編排路徑
 				pathList.forEach( function ( rec ) {
 					rec.splice( 0, 0, { rp: angular.copy( param.Site ) } );

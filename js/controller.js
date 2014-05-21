@@ -92,27 +92,30 @@
 				// } );
 				var pathList = [];
 				param.Client.List.forEach( function ( client ) {
-					var path = angular.copy( outPath );
-					var i = 0 ;
-					while ( i < path.length ) {
-						if ( client.o.t < path[i].rp.t ) {
-							path.splice( i, 0, {rp:client.o} );
-							break;
+					var spath = [];
+					for ( var i = 0 ; i < outPath.length && client.d.t > outPath[i].rp.t ; i++ ) {
+						if ( client.o.t < outPath[i].rp.t ) {
+							var tmp = angular.copy( outPath );
+							tmp.splice( i, 0, {rp:client.o} );
+							tmp.iindex = i;
+							spath.push(tmp);
 						}
-
-						i++ ;
 					}
 
-					if ( i == path.length )
-						path.push( {rp:client.o} );
-
-					while ( i < path.length ) {
-						var tmp = angular.copy( path );
-						tmp.splice( i+1, 0, {rp:client.d} );
-						tmp.client = client;
-						pathList.push( tmp );
-						i++;
+					if ( spath.length == 0 ) {
+						var tmp = angular.copy( outPath ).concat( {rp:client.o} );
+						tmp.iindex = spath.length;
+						spath.push( tmp );
 					}
+
+					spath.forEach( function ( path ) {
+						for ( var i = path.iindex ; i < path.length ; i++ ) {
+							var tmp = angular.copy( path );
+							tmp.splice( i+1, 0, {rp:client.d} );
+							tmp.client = client;
+							pathList.push( tmp );
+						}
+					} );
 				} );
 				// 依照時間先後編排路徑
 				pathList.forEach( function ( rec ) {

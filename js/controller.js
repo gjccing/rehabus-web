@@ -192,6 +192,7 @@
 			};
 
 			$scope.execute = function () {
+				var start_Time = new Date();
 				var param = angular.copy( Parameter );
 				// 設定參數
 				param.Client.List
@@ -212,6 +213,7 @@
 						// 判斷有無可行路徑
 						ppList.forEach( function ( rec ) {
 							rec.tpath = 0;
+							rec.jtime = 0;
 							rec.ttime = 0;
 							rec.reduce( function ( p, c, idx ) { 
 								c.jt = Math.pow(
@@ -221,6 +223,7 @@
 								rec.tpath += c.jt;
 								return c;
 							} );
+							rec.jtime = rec.tpath/param.Car.Speed;
 							rec.forEach( function ( point ) {
 								var wt = point.rp.t-param.Client.WS-point.at;
 								rec.ttime += ( ( wt > 0 )? wt : 0 );
@@ -233,7 +236,7 @@
 							// var bInaccuracy = bPath.slice( 1, bPath.length-1 ).reduce( function ( value, rec ) {
 							// 	value+=Math.abs(rec.at-rec.rp.t);
 							// }, 0 );
-							return (aPath.tpath+aPath.ttime)-(bPath.tpath+bPath.ttime);
+							return (aPath.jtime+aPath.ttime)-(bPath.jtime+bPath.ttime);
 						} )[0];
 						// 決定路徑
 						param.Client.List.splice( param.Client.List.indexOf(chosePath.client), 1 );
@@ -246,13 +249,13 @@
 				$scope.exeLog = CarPathLog.filter( function ( path ) { 
 					return path.length > 1 ; 
 				} );
-				$scope.cost = 1;
-				$scope.tpath = 0;
+				$scope.jtime = 0;
 				$scope.ttime = 0 ;
 				$scope.exeLog.forEach( function ( path ) {
-					$scope.tpath+=path.tpath;
+					$scope.jtime+=path.jtime;
 					$scope.ttime+=path.ttime;
 				} );
+				$scope.stime = (new Date()).getTime() - start_Time.getTime();
 			}
 		} )
 } ) ( angular );

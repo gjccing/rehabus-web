@@ -5,20 +5,14 @@
 <ul ng-if="exeLog" class="list-group" style="margin-top:15px;">
 	<a href="#" class="list-group-item">
     	<h4 class="list-group-item-heading row">
-    		<div class="col-sm-3">路線成本：</div>
-	        <div class="col-sm-9">
-	        	<input class="form-control" 
-		          placeholder="請輸入數字"
-		          type="number"
-		          required
-		          ng-model="cost" >
-	        </div>
-	    </h4>
+    		<div class="col-sm-3">運算時間(毫秒)：</div>
+    		<div class="col-sm-9">{{stime}}</div>
+    	</h4>
 	</a>
 	<a href="#" class="list-group-item">
     	<h4 class="list-group-item-heading row">
-    		<div class="col-sm-3">總路線長度：</div>
-    		<div class="col-sm-9">{{tpath}}</div>
+    		<div class="col-sm-3">總旅程時間：</div>
+    		<div class="col-sm-9">{{jtime}}</div>
     	</h4>
 	</a>
 	<a href="#" class="list-group-item">
@@ -29,8 +23,8 @@
 	</a>
 	<a href="#" class="list-group-item">
     	<h4 class="list-group-item-heading row">
-    		<div class="col-sm-8">目標函數 = 路線成本 x 總路線長度 + 總等待時間</div>
-    		<div class="col-md-offset-3 col-sm-9"> = {{cost}} x {{tpath}} + {{ttime}} = {{cost*tpath+ttime}}</div>
+    		<div class="col-sm-8">目標函數 = 總旅程時間 + 總等待時間</div>
+    		<div class="col-md-offset-3 col-sm-9"> = {{jtime}} + {{ttime}} = {{jtime+ttime}}</div>
     	</h4>
 	</a>
 </ul>

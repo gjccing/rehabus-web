@@ -196,11 +196,12 @@
 				var param = angular.copy( Parameter );
 				// 設定參數
 				param.Client.List
-					.sort( function ( a, b ) { return a.o.t-b.o.t; } )
 					.forEach( function ( rec, idx ) { 
 						rec.o.name='c'+(idx+1)+'+';
 						rec.d.name='c'+(idx+1)+'-';
 					} );
+				param.Client.List
+					.sort( function ( a, b ) { return a.o.t-b.o.t; } );
 				// 依照開始時間窗先後順序對客戶名單進行排序
 				// 標記客戶需求點
 				// console.log( param.Client.List );
